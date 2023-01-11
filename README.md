@@ -1,8 +1,14 @@
 # LibraryManagementSystem
-    
-    >> the list of books is retrieved from a sql database
-    >> we can / edit / remove the books present in our database
-    >> we can search if a book exists in the library
-    >> we can check if we can borrow the book
-    >> we can borrow / return the book
-    >> the changes done in the form are saved in the database
+
+>>> Given task
+
+    >> Creating an application that allows a user to manage the books of a library,
+    >> register by whom and when a book has been borrowed, and, if applicable, when it was returned.
+
+>>> Specs
+
+    >> add new books
+    >> search for books
+    >> remove books
+    >> register when a books was borrowed / returned
+    >> save and load date from a .csv file
