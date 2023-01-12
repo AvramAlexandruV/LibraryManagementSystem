@@ -137,7 +137,6 @@ namespace LibraryManagementSystem
             // 
             // borrowBook
             // 
-            this.borrowBook.Enabled = false;
             this.borrowBook.Location = new System.Drawing.Point(295, 289);
             this.borrowBook.Name = "borrowBook";
             this.borrowBook.Size = new System.Drawing.Size(163, 39);
@@ -148,7 +147,6 @@ namespace LibraryManagementSystem
             // 
             // textBox4
             // 
-            this.textBox4.Enabled = false;
             this.textBox4.Location = new System.Drawing.Point(477, 299);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(265, 20);
@@ -156,7 +154,6 @@ namespace LibraryManagementSystem
             // 
             // returnBook
             // 
-            this.returnBook.Enabled = false;
             this.returnBook.Location = new System.Drawing.Point(295, 334);
             this.returnBook.Name = "returnBook";
             this.returnBook.Size = new System.Drawing.Size(163, 39);

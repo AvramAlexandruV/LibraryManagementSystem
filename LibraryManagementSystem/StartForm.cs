@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 /*
     >>> Library Management System <<<
@@ -21,29 +21,102 @@ using System.Windows.Forms;
 
  */
 
+/*
+    >>> Sql implementation
+
+    >> In order to implement an sql connection we have to create a new data connection to our database
+
+    >> We connect to the database by using the following lines
+            string connect = @"Data Source=(localDb)\MSSQLLOCALDB;Initial Catalog=Library;Integrated Security=True;Pooling=False";
+            SqlConnection con = new SqlConnection(connect);
+    
+    >> We open the connection
+             con.Open();
+
+    >> An we retrieve the data
+             string query1 = "SELECT * FROM Books WHERE TITLE = '" + Title + "' AND GENRE = '" + Genre + "' AND AUTHOR = '" + Author + "'";
+             SqlCommand cmd = new SqlCommand(query1, con);
+             SqlDataAdapter adpt = new SqlDataAdapter(cmd);
+             DataTable dt = new DataTable();
+             adpt.Fill(dt);
+
+    >> Then, in designer mode, we bind our data to the form
+
+    >> The sql implementation works, but we preffered to let it commented out in order to not interfere with out csv reading from the files
+    >> It can easily be put back by adding the connection to our classes and re-mapping the values along side with some basic sql queries
+
+ */
+
 namespace LibraryManagementSystem
 {
     public partial class StartForm : Form
     {
-        //  a book variable using the Book.cs interface we created
-        public Book searchedBook { get; set; }
+        List<Book> books;
 
-        //  initial state of our variables
         public static string Author = string.Empty;
         public static string Genre = string.Empty;
         public static string Title = string.Empty;
         public static string Borrower = string.Empty;
         public static DateTime date = DateTime.Now;
+        
+        //path to our csv file, it is bin tho
+        string path = @"./MOCK_BOOKS.csv";
 
-       
+        //to check if we have filtering on
+        public static int Filtered = 0; 
+
 
         public StartForm()
         {
-            // when we initialize the form we want our option buttons to have the Enable property set to false
             InitializeComponent();
-            borrowBook.Enabled = false;
-            textBox4.Enabled = false;
-            returnBook.Enabled = false;
+            showData();
+        }
+
+        public void showData() {
+            createColumns();
+
+            if (Filtered == 0)
+                noFiltering();
+            else
+                withFiltering();
+
+            foreach (var x in books.Select((value, i) => new { i, value }))
+            {
+                var index = x.i;
+                if (books[index].ID != "INVALID" && books[index].ID != "")
+                {
+                    dataGridView1.Rows.Add(
+                        books[index].ID,
+                        books[index].Title,
+                        books[index].Author,
+                        books[index].Genre,
+                        books[index].publicationDate,
+                        books[index].Pages,
+                        books[index].ISBN,
+                        books[index].Description,
+                        books[index].CurrentBorrower
+                        );
+                }
+            }
+        }
+
+        public void createColumns() {
+            dataGridView1.Columns.Add("ID","ID");
+            dataGridView1.Columns.Add("Title", "Title");
+            dataGridView1.Columns.Add("Author","Author");
+            dataGridView1.Columns.Add("Genre","Genre");
+            dataGridView1.Columns.Add("Publication Date","Publication Date");
+            dataGridView1.Columns.Add("Pages","Pages");
+            dataGridView1.Columns.Add("ISBN","ISBN");
+            dataGridView1.Columns.Add("Description","Description");
+            dataGridView1.Columns.Add("Current Borrower", "Current Borrower");
+        }
+
+        private void clear()
+        {
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+            dataGridView1.Columns.Clear();
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -61,133 +134,122 @@ namespace LibraryManagementSystem
         // checking if the book exists and if it can be borrowed
         private void button1_Click(object sender, EventArgs e)
         {
-            // we retrieve the info from the user input
             Genre = textBox1.Text;
             Author = textBox2.Text;
             Title = textBox3.Text;
 
-            // creating our connection to the local mssql database
-            string connect = @"Data Source=(localDb)\MSSQLLOCALDB;Initial Catalog=Library;Integrated Security=True;Pooling=False";
-            SqlConnection con = new SqlConnection(connect);
+            int tmp = 0;
 
-            try
-            {
-                con.Open();
+            if (Genre == "") { Genre = "-1_NOT_FILTERING"; ++tmp; }
+            if (Author == "") { Author = "-1_NOT_FILTERING"; ++tmp; }
+            if (Title == "") { Title = "-1_NOT_FILTERING"; ++tmp; } 
 
-                if (Title != "" && Genre != "" && Author != "")
-                {
-                    string query = "SELECT * FROM Books WHERE TITLE = '" + Title + "' AND GENRE = '" + Genre + "' AND AUTHOR = '" + Author + "'";
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    SqlDataAdapter adpt = new SqlDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adpt.Fill(dt);
+            MessageBox.Show("Search completed!");
 
-                    if (dt.Rows.Count != 0)
-                    {
-                        MessageBox.Show("Found!");
-                        if (dt.Rows[0][8].ToString() == "")
-                        {
-                            MessageBox.Show("You can borrow this book!");
-                            borrowBook.Enabled = true;
-                            textBox4.Enabled = true;
-                        }
-                        else {
-                            MessageBox.Show("We're sorry, this book was borrowed by " + dt.Rows[0][8] );
-                            returnBook.Enabled = true;
-                        }
-                        
-                        dataGridView1.DataSource = dt;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Not Found. Make sure the Title, Genre and Author are written correctly!");
-                    }
-                }
-            }   
-            catch (NullReferenceException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            if (tmp == 3)
+                Filtered = 0;
+            else
+                Filtered = 1;
+
+            clear();
+            showData();
+        }
+
+        public void noFiltering() {
+            books = File.ReadAllLines("./MOCK_BOOKS.csv")
+                        .Skip(1)
+                        .Select(b => Book.FromCsv(b))
+                        .ToList();
+        }
+
+        public void withFiltering() {
+            books = File.ReadAllLines("./MOCK_BOOKS.csv")
+                        .Skip(1)
+                        .Select(b => Book.FromCsvFilter(b, Genre, Author, Title))
+                        .ToList();
         }
 
         // adding the new borrower to the list
         private void button1_Click_1(object sender, EventArgs e)
         {
-            string connect = @"Data Source=(localDb)\MSSQLLOCALDB;Initial Catalog=Library;Integrated Security=True;Pooling=False";
-            SqlConnection con = new SqlConnection(connect);
-
+            int bookIndex = dataGridView1.CurrentCell.RowIndex;
             Borrower = textBox4.Text;
 
-            // we update the Borrower field of our book
+            if (books[bookIndex].CurrentBorrower != "")
+            {
+                MessageBox.Show("We're sorry, this book was borrowed by " + books[bookIndex].CurrentBorrower);
+            }
+            else {
+                List<string> lines = new List<string>();
 
-            try {
-                con.Open();
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    String line;
 
-                string query1 = "SELECT * FROM Books WHERE TITLE = '" + Title + "' AND GENRE = '" + Genre + "' AND AUTHOR = '" + Author + "'";
-                SqlCommand cmd = new SqlCommand(query1, con);
-                SqlDataAdapter adpt = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                adpt.Fill(dt);
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        if (line.Contains(books[bookIndex].Title))
+                        {
+                            line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + Borrower;
+                        }
+                        lines.Add(line);
+                    }
 
-                string query2 = "UPDATE BOOKS SET CurrentBorrower = '" + Borrower + " " + date + "' WHERE Title='" + Title + "'";
-                SqlCommand cmd2 = new SqlCommand(query2, con);
-                adpt = new SqlDataAdapter(cmd2);
-                dt = new DataTable();
-                adpt.Fill(dt);
+                }
 
+                using (StreamWriter writer = new StreamWriter(path, false))
+                {
+                    foreach (String line in lines)
+                        writer.WriteLine(line);
+                }
 
-                borrowBook.Enabled = false;
-                textBox4.Enabled = false;
                 MessageBox.Show("Congrats!! You borrowed this book.");
 
-            }
-            catch (NullReferenceException ex)
-            {
-                MessageBox.Show(ex.Message);
+                clear();
+                showData();
             }
         }
 
         // returning the book
         private void button2_Click_1(object sender, EventArgs e)
         {
-            string connect = @"Data Source=(localDb)\MSSQLLOCALDB;Initial Catalog=Library;Integrated Security=True;Pooling=False";
-            SqlConnection con = new SqlConnection(connect);
+            int bookIndex = dataGridView1.CurrentCell.RowIndex;
 
-            // we update the HistoryOfBorrowers field by adding the last borrower and then we clear the borrower field by assigning
-            // it an empty string
+            if (books[bookIndex].CurrentBorrower == "")
+            {
+                MessageBox.Show("We're sorry, this book was not borrowed by anyone!");
+            }
+            else
+            {
+                List<string> lines = new List<string>();
 
-            try {
-                con.Open();
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    String line;
 
-                string query1 = "SELECT * FROM Books WHERE TITLE = '" + Title + "' AND GENRE = '" + Genre + "' AND AUTHOR = '" + Author + "'";
-                SqlCommand cmd = new SqlCommand(query1, con);
-                SqlDataAdapter adpt = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                adpt.Fill(dt);
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        if (line.Contains(books[bookIndex].Title))
+                        {
+                            line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + "";
+                        }
+                        lines.Add(line);
+                    }
 
-                string query2 = "UPDATE BOOKS SET HistoryOfBorrowers = '" + dt.Rows[0][9] + " " + dt.Rows[0][8] + " " + date + "' WHERE Title='" + Title + "'";
-                SqlCommand cmd2 = new SqlCommand(query2, con);
-                adpt = new SqlDataAdapter(cmd2);
-                dt = new DataTable();
-                adpt.Fill(dt);
+                }
 
-                string query3 = "UPDATE BOOKS SET CurrentBorrower = '' WHERE Title='" + Title + "'";
-                SqlCommand cmd3 = new SqlCommand(query3, con);
-                adpt = new SqlDataAdapter(cmd3);
-                dt = new DataTable();
-                adpt.Fill(dt);
-
-                borrowBook.Enabled = true;
-                textBox4.Enabled = true;
-                returnBook.Enabled = false;
-
+                using (StreamWriter writer = new StreamWriter(path, false))
+                {
+                    foreach (String line in lines)
+                        writer.WriteLine(line);
+                }
 
                 MessageBox.Show("Book returned!");
+
+                clear();
+                showData();
             }
-            catch (NullReferenceException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+
         }
     }
 }
