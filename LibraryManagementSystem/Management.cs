@@ -78,6 +78,8 @@ namespace LibraryManagementSystem
             dataGridView1.Columns.Add("ISBN", "ISBN");
             dataGridView1.Columns.Add("Description", "Description");
             dataGridView1.Columns.Add("Current Borrower", "Current Borrower");
+            dataGridView1.Columns.Add("HistoryOfBorrowers", "HistoryOfBorrowers");
+            
         }
 
         private void clear()

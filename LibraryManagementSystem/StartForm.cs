@@ -94,7 +94,8 @@ namespace LibraryManagementSystem
                         books[index].Pages,
                         books[index].ISBN,
                         books[index].Description,
-                        books[index].CurrentBorrower
+                        books[index].CurrentBorrower,
+                        books[index].historyOfBorrowers
                         );
                 }
             }
@@ -110,6 +111,7 @@ namespace LibraryManagementSystem
             dataGridView1.Columns.Add("ISBN","ISBN");
             dataGridView1.Columns.Add("Description","Description");
             dataGridView1.Columns.Add("Current Borrower", "Current Borrower");
+            dataGridView1.Columns.Add("HistoryOfBorrowers", "HistoryOfBorrowers");
         }
 
         private void clear()
@@ -190,7 +192,7 @@ namespace LibraryManagementSystem
                     {
                         if (line.Contains(books[bookIndex].Title))
                         {
-                            line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + Borrower;
+                            line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + Borrower + " " + date + ',' + books[bookIndex].historyOfBorrowers;
                         }
                         lines.Add(line);
                     }
@@ -231,7 +233,7 @@ namespace LibraryManagementSystem
                     {
                         if (line.Contains(books[bookIndex].Title))
                         {
-                            line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + "";
+                            line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + "" + ',' + books[bookIndex].historyOfBorrowers + " " + books[bookIndex].CurrentBorrower + " " + date;
                         }
                         lines.Add(line);
                     }

@@ -17,6 +17,7 @@ namespace LibraryManagementSystem
         public string ISBN { get; set; }
         public string Description { get; set; }
         public string CurrentBorrower { get; set; }
+        public string historyOfBorrowers { get; set; }
 
         public static Book FromCsv(string csvLine) {
             string[] values = csvLine.Split(',');
@@ -31,6 +32,7 @@ namespace LibraryManagementSystem
             book.ISBN = values[6];
             book.Description = values[7];
             book.CurrentBorrower = values[8];
+            book.historyOfBorrowers = values[9];
 
             return book;
         }
@@ -52,6 +54,7 @@ namespace LibraryManagementSystem
                 book.ISBN = values[6];
                 book.Description = values[7];
                 book.CurrentBorrower = values[8];
+                book.historyOfBorrowers = values[9];
             }
             else { book.ID = "INVALID"; }
 
