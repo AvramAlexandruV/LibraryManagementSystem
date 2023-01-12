@@ -110,7 +110,7 @@ namespace LibraryManagementSystem
                     lines.Add(line);
                 }
 
-                line = Convert.ToString(++lastId) + ',' + title + ',' + author + ',' + genre + ',' + publicationDate + ',' + pages + ',' + isbn + ',' + description + ',' + "";
+                line = Convert.ToString(++lastId) + ',' + title + ',' + author + ',' + genre + ',' + publicationDate + ',' + pages + ',' + isbn + ',' + description + ',' + "" + ',';
                 lines.Add(line);
             }
 
