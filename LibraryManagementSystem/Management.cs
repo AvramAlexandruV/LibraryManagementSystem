@@ -141,7 +141,7 @@ namespace LibraryManagementSystem
 
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (!line.Contains(books[bookIndex].Title))
+                    if (!line.Contains(books[bookIndex].Title) && books[bookIndex].Title != "")
                     {
                         string[] values = line.Split(',');
                         line = Convert.ToString(id) + ',' + values[1] + ',' + values[2] + ',' + values[3] + ',' + values[4] + ',' + values[5] + ',' + values[6] + ',' + values[7] + ',' + values[8] + ',' + values[9];
