@@ -100,34 +100,39 @@ namespace LibraryManagementSystem
             isbn = iSBNTextBox.Text;
             description = descriptionTextBox.Text;
 
-            List<string> lines = new List<string>();
+            if (title.Length >= 10) {
+                List<string> lines = new List<string>();
 
-            using (StreamReader reader = new StreamReader(path))
-            {
-                String line; int id = 0;
-
-                while ((line = reader.ReadLine()) != null)
+                using (StreamReader reader = new StreamReader(path))
                 {
-                    string[] values = line.Split(',');
-                    line = Convert.ToString(id) + ',' + values[1] + ',' + values[2] + ',' + values[3] + ',' + values[4] + ',' + values[5] + ',' + values[6] + ',' + values[7] + ',' + values[8] + ',' + values[9];
-                    id++;
+                    String line; int id = 0;
+
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] values = line.Split(',');
+                        line = Convert.ToString(id) + ',' + values[1] + ',' + values[2] + ',' + values[3] + ',' + values[4] + ',' + values[5] + ',' + values[6] + ',' + values[7] + ',' + values[8] + ',' + values[9];
+                        id++;
+                        lines.Add(line);
+                    }
+
+                    line = Convert.ToString(id) + ',' + title + ',' + author + ',' + genre + ',' + publicationDate + ',' + pages + ',' + isbn + ',' + description + ',' + "" + ',';
                     lines.Add(line);
                 }
 
-                line = Convert.ToString(id) + ',' + title + ',' + author + ',' + genre + ',' + publicationDate + ',' + pages + ',' + isbn + ',' + description + ',' + "" + ',';
-                lines.Add(line);
+                using (StreamWriter writer = new StreamWriter(path, false))
+                {
+                    foreach (String line in lines)
+                        writer.WriteLine(line);
+                }
+
+                MessageBox.Show("Book added!");
+
+                clear();
+                showData();
             }
-
-            using (StreamWriter writer = new StreamWriter(path, false))
-            {
-                foreach (String line in lines)
-                    writer.WriteLine(line);
+            else{
+                MessageBox.Show("Title is too short!");
             }
-
-            MessageBox.Show("Book added!");
-
-            clear();
-            showData();
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
