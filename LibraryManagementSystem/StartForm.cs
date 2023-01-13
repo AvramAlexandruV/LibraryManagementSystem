@@ -69,6 +69,7 @@ namespace LibraryManagementSystem
         public StartForm()
         {
             InitializeComponent();
+            dataGridView1.AllowUserToAddRows = false;
             showData();
         }
 

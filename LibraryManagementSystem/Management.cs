@@ -33,6 +33,7 @@ namespace LibraryManagementSystem
         public Management()
         {
             InitializeComponent();
+            dataGridView1.AllowUserToAddRows = false;
             showData();
         }
 
@@ -48,7 +49,7 @@ namespace LibraryManagementSystem
             foreach (var x in books.Select((value, i) => new { i, value }))
             {
                 var index = x.i;
-                if (books[index].ID != "INVALID" && books[index].ID != "")
+                if (books[index].ID != "INVALID" && books[index].ID != "" && books[index].Title != "")
                 {
                     dataGridView1.Rows.Add(
                         books[index].ID,
@@ -141,7 +142,7 @@ namespace LibraryManagementSystem
 
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (!line.Contains(books[bookIndex].Title) && books[bookIndex].Title != "")
+                    if (!line.Contains(books[bookIndex].Title))
                     {
                         string[] values = line.Split(',');
                         line = Convert.ToString(id) + ',' + values[1] + ',' + values[2] + ',' + values[3] + ',' + values[4] + ',' + values[5] + ',' + values[6] + ',' + values[7] + ',' + values[8] + ',' + values[9];
