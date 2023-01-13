@@ -182,7 +182,7 @@ namespace LibraryManagementSystem
 
             Borrower = textBox4.Text;
 
-            if (bookIndex != -1 && bookIndex != 0)
+            if (bookIndex != -1 && books.Count != 0)
             {
                 if (books[bookIndex].CurrentBorrower != "")
                 {
@@ -234,7 +234,7 @@ namespace LibraryManagementSystem
             else
                 bookIndex = -1;
 
-            if (bookIndex != -1 && bookIndex != 0) {
+            if (bookIndex != -1 && books.Count != 0) {
                 if (books[bookIndex].CurrentBorrower == "")
                 {
                     MessageBox.Show("We're sorry, this book was not borrowed by anyone!");
