@@ -174,84 +174,107 @@ namespace LibraryManagementSystem
         // adding the new borrower to the list
         private void button1_Click_1(object sender, EventArgs e)
         {
-            int bookIndex = dataGridView1.CurrentCell.RowIndex;
+            int bookIndex;
+            if (dataGridView1.CurrentCell != null)
+                bookIndex = dataGridView1.CurrentCell.RowIndex;
+            else
+                bookIndex = -1;
+
             Borrower = textBox4.Text;
 
-            if (books[bookIndex].CurrentBorrower != "")
+            if (bookIndex != -1)
             {
-                MessageBox.Show("We're sorry, this book was borrowed by " + books[bookIndex].CurrentBorrower);
-            }
-            else {
-                List<string> lines = new List<string>();
-
-                using (StreamReader reader = new StreamReader(path))
+                if (books[bookIndex].CurrentBorrower != "")
                 {
-                    String line;
+                    MessageBox.Show("We're sorry, this book was borrowed by " + books[bookIndex].CurrentBorrower);
+                }
+                else
+                {
+                    List<string> lines = new List<string>();
 
-                    while ((line = reader.ReadLine()) != null)
+                    using (StreamReader reader = new StreamReader(path))
                     {
-                        if (line.Contains(books[bookIndex].Title))
+                        String line;
+
+                        while ((line = reader.ReadLine()) != null)
                         {
-                            line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + Borrower + " " + date + ',' + books[bookIndex].historyOfBorrowers;
+                            if (line.Contains(books[bookIndex].Title))
+                            {
+                                line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + Borrower + " " + date + ',' + books[bookIndex].historyOfBorrowers;
+                            }
+                            lines.Add(line);
                         }
-                        lines.Add(line);
+
                     }
 
+                    using (StreamWriter writer = new StreamWriter(path, false))
+                    {
+                        foreach (String line in lines)
+                            writer.WriteLine(line);
+                    }
+
+                    MessageBox.Show("Congrats!! You borrowed this book.");
+
+                    clear();
+                    showData();
                 }
-
-                using (StreamWriter writer = new StreamWriter(path, false))
-                {
-                    foreach (String line in lines)
-                        writer.WriteLine(line);
-                }
-
-                MessageBox.Show("Congrats!! You borrowed this book.");
-
-                clear();
-                showData();
             }
+            else {
+                MessageBox.Show("No books available!");
+            }
+           
         }
 
         // returning the book
         private void button2_Click_1(object sender, EventArgs e)
         {
-            int bookIndex = dataGridView1.CurrentCell.RowIndex;
+            int bookIndex;
+            if (dataGridView1.CurrentCell != null)
+                bookIndex = dataGridView1.CurrentCell.RowIndex;
+            else
+                bookIndex = -1;
 
-            if (books[bookIndex].CurrentBorrower == "")
-            {
-                MessageBox.Show("We're sorry, this book was not borrowed by anyone!");
+            if (bookIndex != -1) {
+                if (books[bookIndex].CurrentBorrower == "")
+                {
+                    MessageBox.Show("We're sorry, this book was not borrowed by anyone!");
+                }
+                else
+                {
+                    List<string> lines = new List<string>();
+
+                    using (StreamReader reader = new StreamReader(path))
+                    {
+                        String line;
+
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            if (line.Contains(books[bookIndex].Title))
+                            {
+                                line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + "" + ',' + books[bookIndex].historyOfBorrowers + " " + books[bookIndex].CurrentBorrower + " " + date;
+                            }
+                            lines.Add(line);
+                        }
+
+                    }
+
+                    using (StreamWriter writer = new StreamWriter(path, false))
+                    {
+                        foreach (String line in lines)
+                            writer.WriteLine(line);
+                    }
+
+                    MessageBox.Show("Book returned!");
+
+                    clear();
+                    showData();
+                }
+
             }
             else
             {
-                List<string> lines = new List<string>();
-
-                using (StreamReader reader = new StreamReader(path))
-                {
-                    String line;
-
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        if (line.Contains(books[bookIndex].Title))
-                        {
-                            line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + "" + ',' + books[bookIndex].historyOfBorrowers + " " + books[bookIndex].CurrentBorrower + " " + date;
-                        }
-                        lines.Add(line);
-                    }
-
-                }
-
-                using (StreamWriter writer = new StreamWriter(path, false))
-                {
-                    foreach (String line in lines)
-                        writer.WriteLine(line);
-                }
-
-                MessageBox.Show("Book returned!");
-
-                clear();
-                showData();
+                MessageBox.Show("No books available!");
             }
-
         }
     }
 }
