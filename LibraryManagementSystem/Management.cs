@@ -45,6 +45,13 @@ namespace LibraryManagementSystem
                         .Select(b => Book.FromCsv(b))
                         .ToList();
 
+            int id = 0;
+            foreach (var x in books)
+            {
+                books[id].ID = (id + 1).ToString();
+                id++;
+            }
+
             foreach (var x in books.Select((value, i) => new { i, value }))
             {
                 var index = x.i;

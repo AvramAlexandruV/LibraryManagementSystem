@@ -162,6 +162,12 @@ namespace LibraryManagementSystem
                         .Skip(1)
                         .Select(b => Book.FromCsv(b))
                         .ToList();
+
+            int id = 0;
+            foreach (var x in books) {
+                books[id].ID = (id+1).ToString();
+                id++;
+            }
         }
 
         public void withFiltering() {
@@ -169,6 +175,13 @@ namespace LibraryManagementSystem
                         .Skip(1)
                         .Select(b => Book.FromCsvFilter(b, Genre, Author, Title))
                         .ToList();
+
+            int id = 0;
+            foreach (var x in books)
+            {
+                books[id].ID = (id + 1).ToString();
+                id++;
+            }
         }
 
         // adding the new borrower to the list
