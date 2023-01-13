@@ -100,7 +100,15 @@ namespace LibraryManagementSystem
             isbn = iSBNTextBox.Text;
             description = descriptionTextBox.Text;
 
-            if (title.Length >= 10) {
+            bool exists = false;
+
+            foreach (var x in books.Select((value, i) => new { i, value })) {
+                var index = x.i;
+                if (books[index].Title == title)
+                    exists = true;
+            }
+
+                if (title.Length >= 10 && exists == false) {
                 List<string> lines = new List<string>();
 
                 using (StreamReader reader = new StreamReader(path))
@@ -131,7 +139,10 @@ namespace LibraryManagementSystem
                 showData();
             }
             else{
-                MessageBox.Show("Title is too short!");
+                if(exists == true)
+                    MessageBox.Show("The book already exists!");
+                else
+                    MessageBox.Show("Title is too short!");
             }
         }
 
