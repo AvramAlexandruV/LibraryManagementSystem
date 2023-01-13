@@ -45,13 +45,6 @@ namespace LibraryManagementSystem
                         .Select(b => Book.FromCsv(b))
                         .ToList();
 
-            int id = 0;
-            foreach (var x in books)
-            {
-                books[id].ID = (id + 1).ToString();
-                id++;
-            }
-
             foreach (var x in books.Select((value, i) => new { i, value }))
             {
                 var index = x.i;
@@ -110,14 +103,17 @@ namespace LibraryManagementSystem
 
             using (StreamReader reader = new StreamReader(path))
             {
-                String line;
+                String line; int id = 0;
 
                 while ((line = reader.ReadLine()) != null)
                 {
+                    string[] values = line.Split(',');
+                    line = Convert.ToString(id) + ',' + values[1] + ',' + values[2] + ',' + values[3] + ',' + values[4] + ',' + values[5] + ',' + values[6] + ',' + values[7] + ',' + values[8] + ',' + values[9];
+                    id++;
                     lines.Add(line);
                 }
 
-                line = Convert.ToString(++lastId) + ',' + title + ',' + author + ',' + genre + ',' + publicationDate + ',' + pages + ',' + isbn + ',' + description + ',' + "" + ',';
+                line = Convert.ToString(id) + ',' + title + ',' + author + ',' + genre + ',' + publicationDate + ',' + pages + ',' + isbn + ',' + description + ',' + "" + ',';
                 lines.Add(line);
             }
 
@@ -141,12 +137,15 @@ namespace LibraryManagementSystem
 
             using (StreamReader reader = new StreamReader(path))
             {
-                String line;
+                String line; int id = 0;
 
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (!line.Contains(books[bookIndex].Title))
                     {
+                        string[] values = line.Split(',');
+                        line = Convert.ToString(id) + ',' + values[1] + ',' + values[2] + ',' + values[3] + ',' + values[4] + ',' + values[5] + ',' + values[6] + ',' + values[7] + ',' + values[8] + ',' + values[9];
+                        id++;
                         lines.Add(line);
                     }
                     

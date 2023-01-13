@@ -209,11 +209,14 @@ namespace LibraryManagementSystem
                     {
                         String line;
 
+                        int id = 1;
+
                         while ((line = reader.ReadLine()) != null)
                         {
                             if (line.Contains(books[bookIndex].Title))
                             {
-                                line = books[bookIndex].ID + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + Borrower + " " + date + ',' + books[bookIndex].historyOfBorrowers;
+                                line = id.ToString() + ',' + books[bookIndex].Title + ',' + books[bookIndex].Author + ',' + books[bookIndex].Genre + ',' + books[bookIndex].publicationDate + ',' + books[bookIndex].Pages + ',' + books[bookIndex].ISBN + ',' + books[bookIndex].Description + ',' + Borrower + " " + date + ',' + books[bookIndex].historyOfBorrowers;
+                                id++;
                             }
                             lines.Add(line);
                         }
