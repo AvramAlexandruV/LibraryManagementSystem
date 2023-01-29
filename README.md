@@ -11,4 +11,4 @@
     >> search for books
     >> remove books
     >> register when a books was borrowed / returned
-    >> save and load date from a .csv file
+    >> save and load data from a .csv file
